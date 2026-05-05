@@ -1,40 +1,25 @@
 import uuid
-
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean, Text, Numeric
-
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-
-from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import relationship
-
 from sqlalchemy.sql import func
 
-# Khởi tạo lớp Base để các Model kế thừa
+# CHỈ CẦN DÒNG NÀY: Lấy Base đã được khởi tạo từ database.py
+from .database import Base
 
-Base = declarative_base()
+
 
 
 class User(Base):
     __tablename__ = 'users'
-
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
     username_email = Column(String(255), unique=True, nullable=False)
-
     password_hash = Column(Text, nullable=False)
-
     full_name = Column(String(100))
-
-    role = Column(String(20), default='Editor')  # Admin, Editor, Viewer
-
+    role = Column(String(20), default='Editor')
     last_login = Column(DateTime(timezone=True))
-
     is_active = Column(Boolean, default=True)
-
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    # Quan hệ: Một người dùng có thể tải lên nhiều tài liệu
 
     documents = relationship("Document", back_populates="owner")
 
